@@ -1,0 +1,6 @@
+oauthcreds = { 
+	'client_key' : '<trademe consumer key>', 
+	'client_secret' : '<trademe consumer secret>',
+	'resource_owner_key' : '<user oauth token>',
+	'resource_owner_secret': '<user oauth token secret>' 
+	}

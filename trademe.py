@@ -3,6 +3,7 @@ import requests
 import json
 import sys
 from requests_oauthlib import OAuth1
+import urllib
 
 class TrademeApiConnection:
   def __init__(self,apiUrl,oAuthCredentials,cache=True):
@@ -45,7 +46,7 @@ class TrademeItem(object):
      'MemberIds': list(Watcher['MemberId'] for Watcher in self.BidderAndWatchersList) 
     }
     r = self.apiConnection.post("/FixedPriceOffers/MakeOffer.json",json.dumps(postdata))
-    return r if r == False else len(postdata['MemberIds']) 
+    return False if r['Success'] == False else len(postdata['MemberIds']) 
 
   def quickRelist(self):
     postdata = {
@@ -60,15 +61,23 @@ class MyTradeMe:
   def __init__(self,apiConnection):
     self.apiConnection=apiConnection
 
-    
-  def unsoldItems(self,searchFilter="Last45Days"):
+  def unsoldItems(self,searchFilter="Last45Days",qs={'deleted':'false','photo_size':'Thumbnail'}):
     items = []
-    r = self.apiConnection.get('/MyTradeMe/UnsoldItems/%s.json?deleted=false&photo_size=Thumbnail' % (searchFilter))
+    queryString = urllib.urlencode(qs)
+    r = self.apiConnection.get('/MyTradeMe/UnsoldItems/%s.json?%s' % (searchFilter,queryString))
     items = list(TrademeItem(self.apiConnection,item['ListingId']) for item in r['List']) 
     return items 
-  def sellingItems(self,searchFilter="All"):
+
+  def sellingItems(self,searchFilter="All",qs={}):
     items = []
-    r = self.apiConnection.get("/MyTradeMe/SellingItems/%s.json" % (searchFilter))
+    queryString = urllib.urlencode(qs)
+    r = self.apiConnection.get("/MyTradeMe/SellingItems/%s.json?%s" % (searchFilter,queryString))
     items = list(TrademeItem(self.apiConnection,item['ListingId']) for item in r['List'])
     return items 
 
+  def soldItems(self,searchFilter="Last45Days",qs={}):
+    items = []
+    queryString = urllib.urlencode(qs)
+    r = self.apiConnection.get("/MyTradeMe/SellingItems/%s.json?%s" % (searchFilter,queryString))
+    items = list(TrademeItem(self.apiConnection,item['ListingId']) for item in r['List'])
+    return items 

@@ -36,7 +36,10 @@ class TrademeItem(object):
 
   def fixedOfferMembers(self):
       r = self.apiConnection.get("/FixedPriceOffers/%s/Members/All.json" % (self.ListingId))
-      return list(member for member in r['Watchers']) if self.BidderAndWatchers > 0 else []
+      if 'Watchers' in r:
+          return list(member for member in r['Watchers']) if self.BidderAndWatchers > 0 else []
+      else:
+          return []
 
   def offer(self,price,offerDuration=1):
     postdata = {

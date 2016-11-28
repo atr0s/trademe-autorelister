@@ -18,5 +18,8 @@ for item in t.unsoldItems('ItemsICanRelist',{'deleted':'false','photo_size':'Thu
       print "Relisting item '%s' new listing id is %i" % (item.Title,r.ListingId)
   else:
     r = item.quickRelist()
-    print "Relisting item '%s' new listing id is %i" % (item.Title,r.ListingId)
+    if r != False:
+      print "Relisting item '%s' new listing id is %i" % (item.Title,r.ListingId)
+    else:
+      print "Something went wrong relisting %s" % (item.ListingId)
      

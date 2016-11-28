@@ -57,6 +57,8 @@ class TrademeItem(object):
       'ReturnListingDetails': True
     }
     r = self.apiConnection.post("/Selling/Relist.json",json.dumps(postdata))
+    if not r['Success']:
+      return False
     return r if r == False else TrademeItem(self.apiConnection,r['ListingId']) 
 
 class MyTradeMe:
